@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mysql-service:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rehan15
+      MYSQL_DATABASE: devops_ecommerce
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  backend-service:
+    image: devops-backend:latest
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+    ports:
+      - "5001:5000"
+    environment:
+      - DB_HOST=mysql-service
+      - DB_USER=root
+      - DB_PASSWORD=rehan15
+      - DB_NAME=devops_ecommerce
+      - JWT_SECRET=supersecretkey123
+      - NODE_ENV=production
+    depends_on:
+      - mysql-service
+
+  frontend:
+    image: devops-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=http://localhost:5001
+      - VITE_API_BASE_URL=http://localhost:5001
+    depends_on:
+      - backend-service
+
+volumes:
+  mysql-data:
