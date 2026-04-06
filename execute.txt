@@ -1,0 +1,41 @@
+# Review 1 - Demo Execution Instructions
+
+Below are the exact commands you need to run during your demo to prove you meet all the requirements for Review 1.
+
+### Requirement 1: Application Working
+**Command:**
+docker-compose up -d --build
+
+**Use:** This uses the `docker-compose.yml` file to build the latest backend and frontend docker images and starts the entire application (including MySQL on port 3312, backend on port 5010, and frontend on port 3010). 
+**Action:** Once started, open your web browser to `http://localhost:3010` to show the frontend running and making calls to the backend via the API. Submit dummy data in the frontend to demonstrate that the application registers the input correctly.
+
+---
+
+### Requirement 2: Code Availability (Git)
+**Command:**
+git status
+git log -n 3
+
+**Use:** `git status` proves that the current working directory is an active Git repository. `git log` shows that your code (including your frontend code, backend code, Jenkinsfile, and Dockerfiles) has been tracked and committed successfully.
+**Action:** To fully satisfy this requirement, open your repository on GitHub (e.g., `https://github.com/nezukoo9408/devops` or where you pushed your code) in your browser to show the reviewers the code is hosted on GitHub successfully. Make sure to present your `frontend.Dockerfile` and `backend.Dockerfile` inside the `docker` directory.
+
+---
+
+### Requirement 3: Jenkins Execution & Requirement 5: Pipeline Integration
+**Action & Flow:** 
+The pipeline is entirely codified in your `Jenkinsfile`.
+1. Open Jenkins in your browser where you have set it up.
+2. Go to your Pipeline job (the one mapped to your GitHub repository) and click **Build Now**.
+3. Open the **Console Output** for that build.
+
+**Use:** This demonstrates that your Jenkins job isn't just manually checking things, but successfully reads your `Jenkinsfile` from GitHub and executes the stages precisely. The logs will explicitly show node modules installing, tests running, Docker Images building, and containers restarting/deploying.
+
+---
+
+### Requirement 4: Docker Build
+**Command:**
+docker images
+
+**Use:** This command queries the Docker daemon and lists all the Docker images currently existing on your system.
+**Action:** Run this command in your terminal either after `docker-compose up --build` or after the Jenkins Pipeline has completed. It will clearly display the built images on your system (such as `nezukoo9408/devops-frontend:latest` and `nezukoo9408/devops-backend:latest`), proving the image creation phase works.
+
