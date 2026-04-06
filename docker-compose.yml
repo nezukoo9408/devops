@@ -8,7 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: rehan15
       MYSQL_DATABASE: devops_ecommerce
     ports:
-       - "3310:3306"
+      - "3310:3306"
     volumes:
       - mysql-data:/var/lib/mysql
 
@@ -19,7 +19,7 @@ services:
       context: ./backend
       dockerfile: ../docker/backend.Dockerfile
     ports:
-     - "5005:5001"
+      - "5005:5001"
     environment:
       - DB_HOST=mysql-service
       - DB_USER=root
@@ -35,11 +35,11 @@ services:
     build:
       context: ./frontend
       dockerfile: ../docker/frontend.Dockerfile
-   ports:
-     - "3000:80"
+    ports:
+      - "3000:80"
     environment:
-      - VITE_API_URL=http://localhost:5001
-      - VITE_API_BASE_URL=http://localhost:5001
+      - VITE_API_URL=http://localhost:5005
+      - VITE_API_BASE_URL=http://localhost:5005
     depends_on:
       - backend-service
 
