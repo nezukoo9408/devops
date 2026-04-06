@@ -1,0 +1,104 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        
+    - name: Backend - Install & Test
+      run: |
+        cd backend
+        npm install
+        # npm test (Add tests if needed)
+        
+    - name: Frontend - Install & Build
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+  docker-build-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Build and Push Backend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./backend
+        file: ./docker/backend.Dockerfile
+        push: true
+        tags: your-username/devops-backend:latest
+
+    - name: Build and Push Frontend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        file: ./docker/frontend.Dockerfile
+        push: true
+        tags: your-username/devops-frontend:latest
+
+  deploy-to-multi-cloud:
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    # ---------------------------
+    # 1. AWS EKS Deployment
+    # ---------------------------
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Update AWS Kubeconfig
+      run: aws eks update-kubeconfig --region us-east-1 --name devops-eks-cluster
+
+    - name: Deploy to AWS
+      run: |
+        kubectl apply -f k8s/
+        kubectl rollout restart deployment/backend || true
+        kubectl rollout restart deployment/frontend || true
+
+    # ---------------------------
+    # 2. Azure AKS Deployment
+    # ---------------------------
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up AKS Kubeconfig
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: 'devops-multi-cloud-rg'
+        cluster-name: 'devops-aks-cluster'
+
+    - name: Deploy to Azure
+      run: |
+        kubectl apply -f k8s/
+        kubectl rollout restart deployment/backend || true
+        kubectl rollout restart deployment/frontend || true
