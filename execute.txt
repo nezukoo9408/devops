@@ -1,41 +1,206 @@
-# Review 1 - Demo Execution Instructions
+============================================================
+  REVIEW 1 DEMO GUIDE — DevOps E-Commerce Platform
+============================================================
 
-Below are the exact commands you need to run during your demo to prove you meet all the requirements for Review 1.
+ABOUT THE PROJECT:
+------------------
+This is a full-stack containerized E-Commerce Web Application built as part of
+a DevOps project. It demonstrates a complete CI/CD pipeline using Jenkins and Docker.
 
-### Requirement 1: Application Working
-**Command:**
-docker-compose up -d --build
+  - Frontend  : React.js (Vite) + TailwindCSS — served via Nginx inside Docker
+  - Backend   : Node.js + Express REST API — runs inside Docker
+  - Database  : MySQL 8.0 — runs inside Docker
+  - DevOps    : Jenkins Pipeline, Docker, Docker Compose, GitHub
 
-**Use:** This uses the `docker-compose.yml` file to build the latest backend and frontend docker images and starts the entire application (including MySQL on port 3312, backend on port 5010, and frontend on port 3010). 
-**Action:** Once started, open your web browser to `http://localhost:3010` to show the frontend running and making calls to the backend via the API. Submit dummy data in the frontend to demonstrate that the application registers the input correctly.
+WHAT THE APPLICATION DOES (FEATURES):
+---------------------------------------
+1. USER REGISTRATION & LOGIN
+   - Users can create an account (name, email, password)
+   - JWT-based authentication — secured API access
 
----
+2. PRODUCT CATALOG
+   - Displays a list of marine/cargo products (ships, containers, etc.)
+   - Shows product detail page with description and price
 
-### Requirement 2: Code Availability (Git)
-**Command:**
-git status
-git log -n 3
+3. SHOPPING CART
+   - Users can add products to cart
+   - Quantity management in the cart
 
-**Use:** `git status` proves that the current working directory is an active Git repository. `git log` shows that your code (including your frontend code, backend code, Jenkinsfile, and Dockerfiles) has been tracked and committed successfully.
-**Action:** To fully satisfy this requirement, open your repository on GitHub (e.g., `https://github.com/nezukoo9408/devops` or where you pushed your code) in your browser to show the reviewers the code is hosted on GitHub successfully. Make sure to present your `frontend.Dockerfile` and `backend.Dockerfile` inside the `docker` directory.
+4. FULL CHECKOUT FLOW
+   - Step 1: Shipping Page  — enter delivery address
+   - Step 2: Payment Page   — select payment method
+   - Step 3: Place Order    — review and confirm order
+   - Step 4: Order Page     — view order confirmation with details
 
----
+5. ADMIN DASHBOARD
+   - Admin users can view all placed orders
+   - Manage and oversee orders through the dashboard
 
-### Requirement 3: Jenkins Execution & Requirement 5: Pipeline Integration
-**Action & Flow:** 
-The pipeline is entirely codified in your `Jenkinsfile`.
-1. Open Jenkins in your browser where you have set it up.
-2. Go to your Pipeline job (the one mapped to your GitHub repository) and click **Build Now**.
-3. Open the **Console Output** for that build.
+6. HEALTH & METRICS ENDPOINT (For DevOps monitoring)
+   - /health endpoint: shows API status (UP/DOWN)
+   - /metrics endpoint: shows uptime, memory usage, CPU usage
 
-**Use:** This demonstrates that your Jenkins job isn't just manually checking things, but successfully reads your `Jenkinsfile` from GitHub and executes the stages precisely. The logs will explicitly show node modules installing, tests running, Docker Images building, and containers restarting/deploying.
+7. FAULT SIMULATION (Advanced DevOps Feature)
+   - /api/fault/crash  — simulates server crash (Docker restarts automatically)
+   - /api/fault/latency — toggles artificial latency on/off (1-3 seconds delay)
 
----
+PORT & SERVICE MAP:
+--------------------
+   Frontend   →  http://localhost:3010   (Nginx serving React app)
+   Backend    →  http://localhost:5010   (Node.js Express API)
+   MySQL DB   →  localhost:3312          (MySQL running in container)
 
-### Requirement 4: Docker Build
-**Command:**
-docker images
+============================================================
+  STEP-BY-STEP DEMO COMMANDS FOR REVIEW 1
+============================================================
 
-**Use:** This command queries the Docker daemon and lists all the Docker images currently existing on your system.
-**Action:** Run this command in your terminal either after `docker-compose up --build` or after the Jenkins Pipeline has completed. It will clearly display the built images on your system (such as `nezukoo9408/devops-frontend:latest` and `nezukoo9408/devops-backend:latest`), proving the image creation phase works.
+------------------------------------------------------------
+STEP 1 — Show Docker Images (Requirement 4: Docker Build)
+------------------------------------------------------------
+USE: Proves that Docker images have been built for both frontend and backend.
+     Run this command and show the reviewer the list of built images.
 
+CMD:
+  docker images
+
+EXPECTED OUTPUT: You should see:
+  devops-frontend:latest
+  devops-backend:latest
+  nezukoo9408/devops-frontend:latest
+  nezukoo9408/devops-backend:latest
+
+------------------------------------------------------------
+STEP 2 — Start / Verify App is Running (Requirement 1: Application Working)
+------------------------------------------------------------
+USE: Starts all containers (MySQL, Backend, Frontend) using docker-compose.
+     This proves the application runs via Docker — not a local run.
+
+CMD:
+  docker-compose up -d --build
+
+THEN CHECK RUNNING CONTAINERS:
+  docker ps
+
+EXPECTED OUTPUT: Three containers all showing "Up":
+  devops-frontend-1        → port 3010
+  devops-backend-service-1 → port 5010
+  devops-mysql-service-1   → port 3312
+
+ACTION: Open browser to http://localhost:3010
+  → Show the homepage with product listings
+  → Register a new user (Enter name, email, password and click Register)
+  → Login with those credentials
+  → Browse a product and add it to cart
+  → Complete the checkout — enter shipping address, select payment and place order
+  → Show the order confirmation page
+
+------------------------------------------------------------
+STEP 3 — Show API Health Check (Bonus: DevOps Monitoring)
+------------------------------------------------------------
+USE: Proves the backend REST API is live and responding from inside the Docker container.
+
+CMD (run in terminal):
+  curl http://localhost:5010/health
+
+OR open in browser: http://localhost:5010/health
+
+EXPECTED OUTPUT:
+  {"status":"UP","timestamp":"2026-..."}
+
+ALSO CHECK METRICS:
+  curl http://localhost:5010/metrics
+
+EXPECTED OUTPUT: JSON with uptime, memoryUsage, cpuUsage
+
+------------------------------------------------------------
+STEP 4 — Show API Endpoints Directly (Requirement 1: API Working)
+------------------------------------------------------------
+USE: Shows the backend API is working independently, returning real data.
+
+CMD (open in browser):
+  http://localhost:5010/api/products
+
+EXPECTED OUTPUT: JSON array of all products from the database
+
+------------------------------------------------------------
+STEP 5 — Show Git & GitHub Code (Requirement 2: Code Availability)
+------------------------------------------------------------
+USE: Proves the full project is version-controlled and hosted on GitHub
+     with all required files (Dockerfile, frontend, backend, README).
+
+CMDs:
+  git log --oneline -5          ← Shows recent commits
+  git remote -v                 ← Shows GitHub remote URL
+  git status                    ← Shows repo is clean and up to date
+
+ACTION: Open browser to https://github.com/nezukoo9408/devops
+  → Show frontend/ and backend/ directories
+  → Show docker/frontend.Dockerfile and docker/backend.Dockerfile
+  → Show Jenkinsfile at the root
+  → Show README.md
+
+------------------------------------------------------------
+STEP 6 — Trigger Jenkins Pipeline (Requirement 3 & 5: Jenkins + Pipeline Integration)
+------------------------------------------------------------
+USE: Demonstrates the full CI/CD pipeline:
+     Code on GitHub → Jenkins pulls code → Builds Node app → 
+     Builds Docker images → Deploys containers
+
+PIPELINE STAGES IN JENKINSFILE:
+  Stage 1: Checkout Code      — Jenkins pulls from GitHub
+  Stage 2: Build node app     — npm install on backend & frontend
+  Stage 3: Docker Build       — builds devops-backend and devops-frontend images
+  Stage 4: Deploy/Run         — runs docker-compose up -d
+
+ACTION:
+  1. Open Jenkins in browser (e.g., http://localhost:8080)
+  2. Open your Pipeline job
+  3. Click "Build Now"
+  4. Click on the build number → "Console Output"
+  5. Walk through each stage with the reviewer
+
+------------------------------------------------------------
+STEP 7 — Show Fault Simulation (Advanced DevOps Feature — BONUS)
+------------------------------------------------------------
+USE: Shows advanced DevOps capability — simulating failures and observing
+     Docker's automatic recovery (restart: always in docker-compose.yml).
+
+SIMULATE CRASH:
+  curl -X POST http://localhost:5010/api/fault/crash
+
+  → Backend container will crash
+  → Docker restarts it automatically (because restart: always is set)
+
+WATCH RECOVERY:
+  docker ps     ← Run this right after crash, you'll see it restarting then Up again
+
+SIMULATE LATENCY:
+  curl -X POST http://localhost:5010/api/fault/latency
+  → All API calls now get 1-3 second artificial delay
+
+DISABLE LATENCY:
+  curl -X POST http://localhost:5010/api/fault/latency
+  → Toggles back to normal speed
+
+------------------------------------------------------------
+STEP 8 — Final Shutdown (Clean End of Demo)
+------------------------------------------------------------
+USE: Cleanly stop all running containers at end of demo.
+
+CMD:
+  docker-compose down
+
+============================================================
+  SUMMARY TABLE — REVIEW 1 CHECKLIST
+============================================================
+
+  [✓] Application Running       → http://localhost:3010 (UI) + http://localhost:5010 (API)
+  [✓] DB Connected              → MySQL in container, data persisted in Docker volume
+  [✓] Code on GitHub            → https://github.com/nezukoo9408/devops
+  [✓] Dockerfile Present        → docker/frontend.Dockerfile + docker/backend.Dockerfile
+  [✓] README Present            → README.md at root
+  [✓] Jenkins Pipeline          → Jenkinsfile with 4 stages
+  [✓] Docker Build Complete     → docker images shows built images
+  [✓] App Runs via Container    → docker ps proves containerized deployment
+
+============================================================
