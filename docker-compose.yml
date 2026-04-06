@@ -19,7 +19,7 @@ services:
       context: ./backend
       dockerfile: ../docker/backend.Dockerfile
     ports:
-      - "5001:5000"
+     - "5005:5001"
     environment:
       - DB_HOST=mysql-service
       - DB_USER=root
