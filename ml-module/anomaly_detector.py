@@ -3,7 +3,7 @@ import time
 import json
 
 # Configuration
-BACKEND_URL = "http://localhost:5001"
+BACKEND_URL = "http://localhost:5010"
 LATENCY_THRESHOLD = 1.5  # seconds
 ERROR_THRESHOLD = 5     # consecutive errors
 

@@ -13,7 +13,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   backend-service:
-    image: devops-backend:latest
+    image: nezukoo9408/devops-backend:latest
     restart: always
     build:
       context: ./backend
@@ -31,7 +31,7 @@ services:
       - mysql-service
 
   frontend:
-    image: devops-frontend:latest
+    image: nezukoo9408/devops-frontend:latest
     build:
       context: ./frontend
       dockerfile: ../docker/frontend.Dockerfile

@@ -1,0 +1,286 @@
+============================================================
+  PRESENTATION GUIDE — REVIEW 1
+  Project: DevOps E-Commerce Platform
+  Your Name: Rehan (GitHub: nezukoo9408)
+============================================================
+
+HOW TO PRESENT — STRUCTURE YOUR TALK LIKE THIS:
+-------------------------------------------------
+
+  1. Introduction        (30 seconds)
+  2. What the Project Is (1 minute)
+  3. Tech Stack          (1 minute)
+  4. Architecture        (1 minute)
+  5. Live Demo           (3-4 minutes)
+  6. CI/CD Pipeline      (2 minutes)
+  7. DevOps Features     (1 minute)
+  8. Wrap Up / Summary   (30 seconds)
+
+============================================================
+  WHAT TO SAY — WORD BY WORD GUIDE
+============================================================
+
+------------------------------------------------------------
+1. INTRODUCTION (Say this first)
+------------------------------------------------------------
+"Good morning / afternoon everyone.
+
+My name is Rehan and today I will be presenting my Review 1
+submission for the DevOps course.
+
+The project I have built is a full-stack containerized
+E-Commerce web application with a complete CI/CD pipeline
+using Jenkins and Docker."
+
+------------------------------------------------------------
+2. WHAT IS THE PROJECT (Explain the idea)
+------------------------------------------------------------
+"The application is an E-Commerce platform for marine and
+cargo products — users can browse products, add items to
+their cart, and complete a full checkout process.
+
+But more importantly from a DevOps perspective —
+this entire application runs INSIDE Docker containers.
+Nothing runs directly on the host machine.
+
+I have containerized the Frontend, the Backend API, and the
+MySQL database — all defined in a single docker-compose.yml
+file so the entire system can be launched with one command."
+
+------------------------------------------------------------
+3. TECH STACK (Say this while pointing at GitHub repo)
+------------------------------------------------------------
+"Let me quickly go over the technologies used:
+
+  Frontend  → React.js with Vite and TailwindCSS
+              Served through an Nginx server inside Docker
+
+  Backend   → Node.js and Express REST API
+              Handles users, products, orders via REST endpoints
+              Uses JWT tokens for secure authentication
+
+  Database  → MySQL 8.0
+              Runs as a Docker container
+              Data is persisted using Docker volumes
+
+  DevOps    → GitHub for version control
+              Docker and Docker Compose for containerization
+              Jenkins for CI/CD pipeline automation
+              Jenkinsfile defines all pipeline stages as code"
+
+------------------------------------------------------------
+4. ARCHITECTURE (Say this — draw on whiteboard or explain)
+------------------------------------------------------------
+"The architecture follows a 3-tier design:
+
+  Presentation Layer → React frontend on port 3010
+  Application Layer  → Node.js backend API on port 5010
+  Data Layer         → MySQL database on port 3312
+
+All three tiers run as separate Docker containers and
+communicate through a Docker internal network called
+devops_default — so they are isolated from the host system.
+
+The docker-compose.yml file defines all three services,
+their build context, environment variables, port mappings,
+and a shared MySQL data volume."
+
+------------------------------------------------------------
+5. LIVE DEMO (Talk while showing)
+------------------------------------------------------------
+"Now let me show you the application running live.
+
+[Run: docker ps]
+As you can see, all three containers are Up and running.
+This proves the application is running via Docker — not
+locally on my machine.
+
+[Open browser: http://localhost:3010]
+This is the frontend — served by Nginx inside the Docker container.
+
+[Register a user]
+I will now register a new user. I fill in the name, email
+and password — and the frontend makes an API call to the
+backend which stores this in the MySQL database inside Docker.
+
+[Browse and add to cart]
+I can now browse the product catalog, click on a product
+and add it to my cart.
+
+[Checkout flow]
+I will now complete the full checkout — I enter a shipping
+address, select payment method, place the order — and here
+is the order confirmation with a unique Order ID.
+
+This entire flow — from UI to API to Database — is running
+completely inside Docker containers."
+
+------------------------------------------------------------
+6. CI/CD PIPELINE with JENKINS (Most important part)
+------------------------------------------------------------
+"Now let me show you the CI/CD pipeline.
+
+[Open Jenkins at http://localhost:8080]
+I have set up Jenkins as my CI/CD server.
+This job is connected to my GitHub repository:
+  https://github.com/nezukoo9408/devops
+
+[Show Jenkinsfile in GitHub or VS Code]
+The pipeline is defined as code in the Jenkinsfile
+at the root of my repository. It has 4 stages:
+
+  Stage 1: Checkout Code
+    Jenkins pulls the latest code from GitHub automatically
+
+  Stage 2: Build Node App
+    npm install runs for both backend and frontend
+    This verifies the code compiles and dependencies install
+
+  Stage 3: Docker Build
+    Docker images are built for both services:
+      devops-backend:latest
+      devops-frontend:latest
+
+  Stage 4: Deploy Container
+    docker-compose up -d runs which starts all containers
+
+[Click Build Now in Jenkins and show Console Output]
+I will now trigger a build... you can see each stage
+executing in the console log.
+
+[Run: docker images]
+After the pipeline completes, you can see the Docker images
+were successfully built and are listed here."
+
+------------------------------------------------------------
+7. DEVOPS FEATURES — EXTRA POINTS (Mention these)
+------------------------------------------------------------
+"Beyond the basic requirements, I have also implemented
+some advanced DevOps features:
+
+  HEALTH MONITORING:
+    The backend exposes a /health endpoint that returns
+    the API status and timestamp — useful for uptime monitoring.
+
+    [Open: http://localhost:5010/health]
+    You can see it returns status UP with a timestamp.
+
+    [Open: http://localhost:5010/metrics]
+    The /metrics endpoint returns real-time data like
+    server uptime, memory usage and CPU usage — simulating
+    what a monitoring tool like Prometheus would consume.
+
+  SELF-HEALING WITH DOCKER:
+    In docker-compose.yml I have set restart: always on every
+    service. This means if any container crashes, Docker
+    automatically restarts it without any manual intervention.
+
+    [Run: curl -X POST http://localhost:5010/api/fault/crash]
+    I am now simulating a server crash...
+
+    [Run: docker ps immediately after]
+    You can see the container went down and Docker
+    automatically brought it back up — this is self-healing
+    infrastructure.
+
+  FAULT SIMULATION:
+    I also built a latency simulation endpoint that can
+    inject 1-3 second delays into all API responses to
+    test how the frontend handles slow networks.
+
+    [Run: curl -X POST http://localhost:5010/api/fault/latency]"
+
+------------------------------------------------------------
+8. WRAP UP / SUMMARY (End strong)
+------------------------------------------------------------
+"To summarize what I have demonstrated today:
+
+  The application — a full E-Commerce platform — runs
+  completely inside Docker containers.
+
+  The code is version-controlled on GitHub with a clear
+  commit history and the Dockerfile is part of the repo.
+
+  Jenkins automates the entire pipeline — from pulling
+  code from GitHub, building the app, creating Docker images,
+  to deploying and running the containers.
+
+  I have also added a health check, metrics endpoint and
+  self-healing fault simulation as additional DevOps features.
+
+  This covers all 5 requirements for Review 1:
+    1. Application Running
+    2. Code on GitHub with Dockerfile
+    3. Jenkins Execution
+    4. Docker Build
+    5. End-to-End Pipeline Integration
+
+  Thank you. I am happy to take any questions."
+
+============================================================
+  KEY TALKING POINTS — Remember These
+============================================================
+
+  - "Everything runs inside Docker — not on my local machine"
+  - "The Jenkinsfile is pipeline-as-code — defined in the repo"
+  - "One command — docker-compose up — starts the entire system"
+  - "Jenkins connects to GitHub and automates the build process"
+  - "Docker images are built as part of the pipeline stages"
+  - "restart: always in docker-compose gives self-healing capability"
+  - "JWT authentication secures all backend API endpoints"
+  - "The /health and /metrics endpoints mimic real DevOps monitoring"
+
+============================================================
+  QUESTIONS THEY MIGHT ASK — BE READY
+============================================================
+
+  Q: What is Docker Compose used for?
+  A: Docker Compose lets me define and run multiple containers
+     together using a single YAML file. Instead of running each
+     container manually, I just run docker-compose up and all
+     three services start automatically.
+
+  Q: What is a Dockerfile?
+  A: A Dockerfile is a script that tells Docker how to build
+     an image. For my backend it installs Node.js, copies the
+     code, installs dependencies and starts the server.
+     For my frontend it builds the React app and serves it via Nginx.
+
+  Q: What is a Jenkinsfile?
+  A: A Jenkinsfile is a pipeline-as-code file. Instead of
+     configuring the pipeline through Jenkins UI, I define all
+     the stages directly in the code repository — this makes
+     the pipeline version-controlled and reproducible.
+
+  Q: Why use Jenkins instead of GitHub Actions?
+  A: Jenkins is a self-hosted CI/CD server that gives full
+     control over the build environment. It can run on your
+     own machine or server and is very widely used in industry.
+
+  Q: What happens if a container crashes?
+  A: Because I set restart: always in docker-compose.yml,
+     Docker automatically detects the crash and restarts the
+     container — this is called self-healing infrastructure.
+
+  Q: What is JWT?
+  A: JWT stands for JSON Web Token. After a user logs in, the
+     backend sends a signed token. The frontend stores this
+     token and sends it with every API request to prove the
+     user is authenticated. This secures protected routes.
+
+============================================================
+  TIPS FOR PRESENTING
+============================================================
+
+  - Speak slowly and clearly when showing terminal commands
+  - Point at the screen when explaining what each output means
+  - Say "as you can see here..." when showing container logs
+  - Have all tabs pre-opened before presenting:
+      Tab 1: http://localhost:3010  (App UI)
+      Tab 2: http://localhost:5010/health  (API health)
+      Tab 3: https://github.com/nezukoo9408/devops  (GitHub)
+      Tab 4: http://localhost:8080  (Jenkins)
+  - Keep execute.txt open in a separate window for commands
+  - Practice the demo once before the actual review
+
+============================================================

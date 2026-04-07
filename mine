@@ -1,0 +1,33 @@
+docker-compose up -d --build
+
+docker ps
+
+http://localhost:3010
+
+http://localhost:8081
+
+https://github.com/nezukoo9408/devops
+
+
+Build Now in Jenkins 
+ 
+ docker images
+
+
+ curl http://localhost:5010/health
+
+EXPECTED:  {"status":"UP","timestamp":"..."}
+
+ curl http://localhost:5010/metrics
+
+EXPECTED: JSON with uptime, memoryUsage, cpuUsage values
+
+ curl http://localhost:5010/api/products
+
+EXPECTED: JSON array of all products from the MySQL database
+
+ curl -X POST http://localhost:5010/api/fault/crash
+
+ curl -X POST http://localhost:5010/api/fault/latency
+
+ docker-compose down

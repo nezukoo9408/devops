@@ -42,7 +42,10 @@ pipeline {
             steps {
                 bat '''
                 docker-compose down
-                docker-compose up -d
+                docker-compose up --build -d
+                echo Waiting for MySQL to initialize...
+                timeout /t 20
+                docker-compose exec backend-service npm run seed || echo seed skipped
                 '''
             }
         }
